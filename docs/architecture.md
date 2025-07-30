@@ -1,3 +1,4 @@
+```mermaid
 graph TD
     A[Business User] -->|HTTPS| B[React Frontend<br>S3/CloudFront]
     B -->|REST API| C[AWS API Gateway]
@@ -26,3 +27,4 @@ graph TD
     style F fill:#bff,stroke:#333
     style G fill:#fbf,stroke:#333
     style H fill:#bbf,stroke:#333
+```
