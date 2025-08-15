@@ -1,6 +1,7 @@
 # cloud formation full access policy added
 # AmazonSSMFullAccess added
 # ssm_GetParameter_anyResource inline policy added
+# add serverless access key to Output API URLs step
 name: Deploy Backend and Frontend
 on:
   push:
@@ -24,6 +25,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Output API URLs
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
         run: |
           echo "API_URL=$(serverless info --verbose | grep ServiceEndpoint | awk '{print $2}')" >> $GITHUB_ENV
           echo "WEBSOCKET_URL=$(serverless info --verbose | grep WebSocketEndpoint | awk '{print $2}')" >> $GITHUB_ENV
