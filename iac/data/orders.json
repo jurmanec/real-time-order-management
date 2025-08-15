@@ -1,0 +1,43 @@
+{
+  "Orders": [
+    {
+      "PutRequest": {
+        "Item": {
+          "order_id": { "S": "ord123" },
+          "status": { "S": "Placed" },
+          "items": { "L": [
+            { "M": { "product_id": { "S": "p1" }, "name": { "S": "Widget A" }, "quantity": { "N": "2" } } },
+            { "M": { "product_id": { "S": "p2" }, "name": { "S": "Widget B" }, "quantity": { "N": "1" } } }
+          ] },
+          "timestamp": { "S": "2025-08-09T18:00:00Z" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "order_id": { "S": "ord124" },
+          "status": { "S": "Processed" },
+          "items": { "L": [
+            { "M": { "product_id": { "S": "p3" }, "name": { "S": "Widget C" }, "quantity": { "N": "3" } } },
+            { "M": { "product_id": { "S": "p4" }, "name": { "S": "Widget D" }, "quantity": { "N": "2" } } }
+          ] },
+          "timestamp": { "S": "2025-08-09T18:30:00Z" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "order_id": { "S": "ord125" },
+          "status": { "S": "Shipped" },
+          "items": { "L": [
+            { "M": { "product_id": { "S": "p1" }, "name": { "S": "Widget A" }, "quantity": { "N": "1" } } },
+            { "M": { "product_id": { "S": "p5" }, "name": { "S": "Widget E" }, "quantity": { "N": "4" } } }
+          ] },
+          "timestamp": { "S": "2025-08-09T19:00:00Z" }
+        }
+      }
+    }
+  ]
+}

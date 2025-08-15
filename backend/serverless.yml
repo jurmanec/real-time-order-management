@@ -1,0 +1,118 @@
+org: jurmanec # "org" ensures this Service is used with the correct Serverless Framework Access Key.
+service: order-management-dashboard-backend # "service" is the name of this project. This will also be added to your AWS resource names.
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ${opt:region, 'us-east-1'}
+  iam:
+    role:
+      statements:
+        # API
+        - Effect: Allow # getOrders
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/Orders
+            - arn:aws:dynamodb:${self:provider.region}:*:table/Orders/index/StatusIndex
+        - Effect: Allow # updateOrder
+          Action:
+            - dynamodb:UpdateItem
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/Orders
+        - Effect: Allow # streamProcessor
+          Action:
+            - dynamodb:DescribeStream
+            - dynamodb:GetRecords
+            - dynamodb:GetShardIterator
+            - dynamodb:ListStreams
+          Resource: arn:aws:dynamodb:${self:provider.region}:*:table/Orders/stream/*
+        - Effect: Allow
+          Action:
+            - execute-api:ManageConnections
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - dynamodb:Scan
+            - dynamodb:DeleteItem
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/Connections
+        # Websocket
+        - Effect: Allow # websocketUpdate, streamProcessor
+          Action:
+            - execute-api:ManageConnections
+          Resource: '*'
+        - Effect: Allow # connect
+          Action:
+            - dynamodb:PutItem
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/Connections
+        - Effect: Allow # disconnnect
+          Action:
+            - dynamodb:DeleteItem
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:*:table/Connections
+  environment:
+  # Uncomment to easily set up a custom domain. Read the docs for more details:
+  # https://www.serverless.com/framework/docs/providers/aws/guide/domains
+  # domain: api.example.com
+functions:
+  # hello:
+  #   handler: src/_sample/handler.hello
+  #   events:
+  #     - httpApi:
+  #         path: /
+  #         method: get
+  getOrders:
+    handler: src/get-orders/index.handler
+    events:
+      - http:
+          path: /orders # https://yau0yycux8.execute-api.us-east-1.amazonaws.com/dev/orders
+          method: get
+          cors: true
+  updateOrder: 
+    handler: src/update-order/index.handler
+    events:
+      - http:
+          path: /orders/{order_id}
+          method: put
+          cors: true
+  websocketUpdate:
+    handler: src/websocket-update/index.handler
+    events:
+      - websocket:
+          route: $default
+  streamProcessor:
+    handler: src/stream-processor/index.handler
+    events:
+      - stream:
+          arn: arn:aws:dynamodb:${self:provider.region}:913782656323:table/Orders/stream/2025-08-14T21:37:00.068
+          batchSize: 10
+  connect:
+    description: 'Adds entry to Connections table on client websocket connect'
+    handler: src/connect/index.handler
+    events:
+      - websocket:
+          route: $connect
+  disconnect:
+    description: 'Deletes entry from Connections table on client websocket disconnect'
+    handler: src/disconnect/index.handler
+    events:
+      - websocket:
+          route: $disconnect
+  # getInventory:
+  #   handler: src/get-inventory/index.handler
+  #   events:
+  #     - http:
+  #         path: /inventory
+  #         method: get
+  #         cors: true
+  #   iamRoleStatements:
+  #     - Effect: Allow
+  #       Action:
+  #         - dynamodb:Scan
+  #       Resource:
+  #         - arn:aws:dynamodb:${self:provider.region}:*:table/Inventory
+# plugins:
+#   - serverless-websockets-plugin

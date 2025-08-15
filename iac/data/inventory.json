@@ -1,0 +1,49 @@
+{
+  "Inventory": [
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "p1" },
+          "name": { "S": "Widget A" },
+          "stock_level": { "N": "50" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "p2" },
+          "name": { "S": "Widget B" },
+          "stock_level": { "N": "20" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "p3" },
+          "name": { "S": "Widget C" },
+          "stock_level": { "N": "8" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "p4" },
+          "name": { "S": "Widget D" },
+          "stock_level": { "N": "100" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "p5" },
+          "name": { "S": "Widget E" },
+          "stock_level": { "N": "15" }
+        }
+      }
+    }
+  ]
+}
