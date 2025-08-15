@@ -1,4 +1,5 @@
 # cloud formation full access policy added
+# AmazonSSMFullAccess added
 name: Deploy Backend and Frontend
 on:
   push:
