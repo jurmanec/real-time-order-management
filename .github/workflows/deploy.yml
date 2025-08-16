@@ -1,7 +1,3 @@
-# cloud formation full access policy added
-# AmazonSSMFullAccess added
-# ssm_GetParameter_anyResource inline policy added
-# add serverless access key to Output API URLs step
 name: Deploy Backend and Frontend
 on:
   push:
