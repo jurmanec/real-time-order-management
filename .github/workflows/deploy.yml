@@ -1,4 +1,5 @@
 # deploy backend and frontend
+# deploy only backend
 name: Deploy Backend and Frontend
 on:
   push:
