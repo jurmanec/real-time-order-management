@@ -14,7 +14,7 @@ import { Order } from '@/app/lib/definitions';
 /* testing */
 import { stubbedOrders, stubbedInventory } from '@/app/data/stubbedData';
 
-
+/* trivial */
 /* charts.js */
 ChartJS.register(CategoryScale, LinearScale, BarElement);
 
