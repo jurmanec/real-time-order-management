@@ -66,7 +66,8 @@ jobs:
         run: |
           echo "API_URL=$(serverless info --stage staging --verbose 2>&1 | grep ServiceEndpoint: | awk '{print $2}')" >> $GITHUB_OUTPUT
           echo "WEBSOCKET_URL=$(serverless info --stage staging --verbose 2>&1 | grep ServiceEndpointWebsocket: | awk '{print $2}')" >> $GITHUB_OUTPUT
-    sync-branches: # hybrid trunk-based / git-based for aws amplify
+  sync-branches: # hybrid trunk-based / git-based for aws amplify
+    needs: [ deploy-backend-dev, deploy-backend-qa ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
