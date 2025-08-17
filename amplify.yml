@@ -11,7 +11,7 @@ applications:
             # cloud-formation describe stacks permissions given to the service role
             - export API_URL=$(aws cloudformation describe-stacks --stack-name $BACKEND-$AWS_BRANCH --query 'Stacks[0].Outputs[?OutputKey==`ServiceEndpoint`].OutputValue' --output text)
             - export WEBSOCKET_URL=$(aws cloudformation describe-stacks --stack-name $BACKEND-$AWS_BRANCH --query 'Stacks[0].Outputs[?OutputKey==`ServiceEndpointWebsocket`].OutputValue' --output text)
-            - echo "NEXT_PUBLIC_API_URL=$API_URL" >> .env.production
+            - echo "NEXT_PUBLIC_API_URL=$API_URL/orders" >> .env.production
             - echo "NEXT_PUBLIC_WEBSOCKET_URL=$WEBSOCKET_URL" >> .env.production
             - 'pnpm run build'
       artifacts:
