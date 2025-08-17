@@ -66,8 +66,8 @@ jobs:
         run: |
           echo "API_URL=$(serverless info --stage staging --verbose 2>&1 | grep ServiceEndpoint: | awk '{print $2}')" >> $GITHUB_OUTPUT
           echo "WEBSOCKET_URL=$(serverless info --stage staging --verbose 2>&1 | grep ServiceEndpointWebsocket: | awk '{print $2}')" >> $GITHUB_OUTPUT
-  sync-branches: # hybrid trunk-based / git-based for aws amplify
-    needs: [ deploy-backend-dev, deploy-backend-qa ]
+  sync-branches-dev: # hybrid trunk-based / git-based for aws amplify
+    needs: [ deploy-backend-dev ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -83,6 +83,18 @@ jobs:
           git checkout dev || git checkout -b dev
           git merge main --no-edit
           git push origin dev
+  sync-branches-qa: # hybrid trunk-based / git-based for aws amplify
+    needs: [ deploy-backend-qa ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for proper branch syncing
+      - name: Set up Git
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
       - name: Sync qa branch
         run: |
           git checkout qa || git checkout -b qa
