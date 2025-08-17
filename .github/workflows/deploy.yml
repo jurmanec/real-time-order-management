@@ -10,9 +10,6 @@ jobs:
     defaults:
       run:
         working-directory: backend
-    outputs:
-      api_url: ${{ steps.set-urls.outputs.API_URL }}
-      websocket_url: ${{ steps.set-urls.outputs.WEBSOCKET_URL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -26,24 +23,12 @@ jobs:
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }} 
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: Output API URLs
-        id: set-urls
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-        run: |
-          echo "API_URL=$(serverless info --verbose 2>&1 | grep ServiceEndpoint: | awk '{print $2}')" >> $GITHUB_OUTPUT
-          echo "WEBSOCKET_URL=$(serverless info --verbose 2>&1 | grep ServiceEndpointWebsocket: | awk '{print $2}')" >> $GITHUB_OUTPUT
   deploy-backend-qa:
     runs-on: ubuntu-latest
     needs: deploy-backend-dev
     defaults:
       run:
         working-directory: backend
-    outputs:
-      api_url_staging: ${{ steps.set-urls.outputs.API_URL }}
-      websocket_url_staging: ${{ steps.set-urls.outputs.WEBSOCKET_URL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -57,15 +42,6 @@ jobs:
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: Output Staging API URLs
-        id: set-urls
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-        run: |
-          echo "API_URL=$(serverless info --stage staging --verbose 2>&1 | grep ServiceEndpoint: | awk '{print $2}')" >> $GITHUB_OUTPUT
-          echo "WEBSOCKET_URL=$(serverless info --stage staging --verbose 2>&1 | grep ServiceEndpointWebsocket: | awk '{print $2}')" >> $GITHUB_OUTPUT
   sync-branches-dev: # hybrid trunk-based / git-based for aws amplify
     needs: [ deploy-backend-dev ]
     runs-on: ubuntu-latest
