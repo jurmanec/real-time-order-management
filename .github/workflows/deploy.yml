@@ -2,6 +2,8 @@ name: Deploy Backend and Frontend
 on:
   push:
     branches: [main]
+permissions:
+  contents: write  # Grants read and write access to repository contents
 jobs:
   sync-branches: # hybrid trunk-based / git-based for aws amplify
     runs-on: ubuntu-latest
