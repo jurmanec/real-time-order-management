@@ -3,16 +3,16 @@ const { QueryCommand, ScanCommand, DynamoDBDocumentClient } = require("@aws-sdk/
 const { unmarshall } = require("@aws-sdk/util-dynamodb");
 const client = new DynamoDBClient({ region: process.env.AWS_REGION });
 const ddbDocClient = DynamoDBDocumentClient.from(client);
+const ordersTable= process.env.ORDERS_TABLE;
 
 exports.handler = async (event) => {
   try {
     const searchTerm = event.queryStringParameters?.search || "";
     let response;
-
     if (searchTerm.startsWith("ord")) {
       // Search by order_id (primary key)
       const command = new GetItemCommand({
-        TableName: "Orders",
+        TableName: ordersTable,
         Key: { order_id: { S: searchTerm } },
       });
       response = await client.send(command);
@@ -24,12 +24,13 @@ exports.handler = async (event) => {
     } else if (searchTerm) {
       // Search by status (GSI)
       const command = new QueryCommand({
-        TableName: "Orders",
+        TableName: ordersTable,
         IndexName: "StatusIndex",
         KeyConditionExpression: "#pk = :pkVal",
         ExpressionAttributeNames: { "#pk": "status" },
         ExpressionAttributeValues: { ":pkVal": searchTerm },
       });
+
       response = await ddbDocClient.send(command);
       return {
         statusCode: 200,
@@ -38,7 +39,7 @@ exports.handler = async (event) => {
       };
     } else {
       // No search term, return all orders
-      const command = new ScanCommand({ TableName: "Orders" });
+      const command = new ScanCommand({ TableName: ordersTable });
       response = await client.send(command);
       return {
         statusCode: 200,

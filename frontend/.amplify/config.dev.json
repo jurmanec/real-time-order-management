@@ -1,0 +1,4 @@
+{
+    "NEXT_PUBLIC_API_URL": "https://l2sqsbjuc1.execute-api.us-east-1.amazonaws.com/dev/orders",
+    "NEXT_PUBLIC_WEBSOCKET_URL": "wss://rgq4ifvq92.execute-api.us-east-1.amazonaws.com/dev"
+}

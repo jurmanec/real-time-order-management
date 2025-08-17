@@ -1,13 +1,13 @@
 const { DynamoDBClient, PutItemCommand } = require('@aws-sdk/client-dynamodb');
 // const { PutItemCommand } = require('@aws-sdk/lib-dynamodb');
 const client = new DynamoDBClient({ region: process.env.AWS_REGION });
+const stage = process.env.STAGE;
 
 exports.handler = async (event) => {
   try {
-    console.log(`${JSON.stringify(event)}`)
     const connectionId = event.requestContext.connectionId;
     const command = new PutItemCommand({
-      TableName: 'Connections',
+      TableName: `Connections-${stage}`,
       Item: { connectionId: { S: connectionId } },
     });
     await client.send(command);

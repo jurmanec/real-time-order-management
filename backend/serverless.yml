@@ -14,20 +14,20 @@ provider:
             - dynamodb:Query
             - dynamodb:Scan
           Resource:
-            - arn:aws:dynamodb:${self:provider.region}:*:table/Orders
-            - arn:aws:dynamodb:${self:provider.region}:*:table/Orders/index/StatusIndex
+            - arn:aws:dynamodb:${aws:region}:*:table/Orders-${opt:stage, self:provider.stage}
+            - arn:aws:dynamodb:${aws:region}:*:table/Orders-${opt:stage, self:provider.stage}/index/StatusIndex
         - Effect: Allow # updateOrder
           Action:
             - dynamodb:UpdateItem
           Resource:
-            - arn:aws:dynamodb:${self:provider.region}:*:table/Orders
+            - arn:aws:dynamodb:${aws:region}:*:table/Orders-${opt:stage, self:provider.stage}
         - Effect: Allow # streamProcessor
           Action:
             - dynamodb:DescribeStream
             - dynamodb:GetRecords
             - dynamodb:GetShardIterator
             - dynamodb:ListStreams
-          Resource: arn:aws:dynamodb:${self:provider.region}:*:table/Orders/stream/*
+          Resource: arn:aws:dynamodb:${aws:region}:*:table/Orders-${opt:stage, self:provider.stage}/stream/*
         - Effect: Allow
           Action:
             - execute-api:ManageConnections
@@ -37,7 +37,7 @@ provider:
             - dynamodb:Scan
             - dynamodb:DeleteItem
           Resource:
-            - arn:aws:dynamodb:${self:provider.region}:*:table/Connections
+            - arn:aws:dynamodb:${aws:region}:*:table/Connections-${opt:stage, self:provider.stage}
         # Websocket
         - Effect: Allow # websocketUpdate, streamProcessor
           Action:
@@ -47,28 +47,28 @@ provider:
           Action:
             - dynamodb:PutItem
           Resource:
-            - arn:aws:dynamodb:${self:provider.region}:*:table/Connections
+            - arn:aws:dynamodb:${aws:region}:*:table/Connections-${opt:stage, self:provider.stage}
         - Effect: Allow # disconnnect
           Action:
             - dynamodb:DeleteItem
           Resource:
-            - arn:aws:dynamodb:${self:provider.region}:*:table/Connections
+            - arn:aws:dynamodb:${aws:region}:*:table/Connections-${opt:stage, self:provider.stage}
   environment:
+    STAGE: ${opt:stage, self:provider.stage} 
+    ORDERS_TABLE: Orders-${opt:stage, self:provider.stage} 
   # Uncomment to easily set up a custom domain. Read the docs for more details:
   # https://www.serverless.com/framework/docs/providers/aws/guide/domains
   # domain: api.example.com
+custom:
+  stream:
+    dev: '2025-08-17T01:21:53.702'
+    qa: '2025-08-17T01:22:01.745'
 functions:
-  # hello:
-  #   handler: src/_sample/handler.hello
-  #   events:
-  #     - httpApi:
-  #         path: /
-  #         method: get
   getOrders:
     handler: src/get-orders/index.handler
     events:
       - http:
-          path: /orders # https://yau0yycux8.execute-api.us-east-1.amazonaws.com/dev/orders
+          path: /orders
           method: get
           cors: true
   updateOrder: 
@@ -87,7 +87,8 @@ functions:
     handler: src/stream-processor/index.handler
     events:
       - stream:
-          arn: arn:aws:dynamodb:${self:provider.region}:913782656323:table/Orders/stream/2025-08-14T21:37:00.068
+          arn: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/\
+            Orders-${opt:stage, self:provider.stage}/stream/${self:custom.stream.${opt:stage, self:provider.stage}}"
           batchSize: 10
   connect:
     description: 'Adds entry to Connections table on client websocket connect'
@@ -116,3 +117,4 @@ functions:
   #         - arn:aws:dynamodb:${self:provider.region}:*:table/Inventory
 # plugins:
 #   - serverless-websockets-plugin
+# Tables defined in iac/setup.sh

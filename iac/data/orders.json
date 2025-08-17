@@ -1,5 +1,5 @@
 {
-  "Orders": [
+  "Orders-qa": [
     {
       "PutRequest": {
         "Item": {

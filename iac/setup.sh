@@ -1,11 +1,13 @@
 #!/bin/sh
 
+# Environment
+stage=qa
 
 # Create
 
-# Orders
+# # Orders
 # aws dynamodb create-table \
-#     --table-name Orders \
+#     --table-name Orders-${stage} \
 #     --attribute-definitions \
 #         AttributeName=order_id,AttributeType=S \
 #         AttributeName=status,AttributeType=S \
@@ -21,14 +23,14 @@
 
 # Inventory
 # aws dynamodb create-table \
-#   --table-name Inventory \
+#   --table-name Inventory-${stage} \
 #   --attribute-definitions AttributeName=product_id,AttributeType=S \
 #   --key-schema AttributeName=product_id,KeyType=HASH \
 #   --billing-mode PAY_PER_REQUEST
 
-# Connections
+# # Connections
 # aws dynamodb create-table \
-#   --table-name Connections \
+#   --table-name Connections-${stage} \
 #   --attribute-definitions AttributeName=connectionId,AttributeType=S \
 #   --key-schema AttributeName=connectionId,KeyType=HASH \
 #   --billing-mode PAY_PER_REQUEST
@@ -36,12 +38,12 @@
 # Seed tables
 
 # Remove BOM from JSON file if it exists
-# aws dynamodb batch-write-item --request-items file://data/orders.json
+aws dynamodb batch-write-item --request-items file://data/orders.json
 # aws dynamodb batch-write-item --request-items file://data/inventory.json
 
 # Delete
 
-# aws dynamodb delete-table --table-name Orders
-# aws dynamodb delete-table --table-name Inventory
+# aws dynamodb delete-table --table-name Orders-${stage}
+# aws dynamodb delete-table --table-name Inventory-${stage}
 
 echo "Done"

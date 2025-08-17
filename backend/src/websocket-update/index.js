@@ -2,7 +2,6 @@ const { ApiGatewayManagementApiClient, PostToConnectionCommand } = require('@aws
 
 exports.handler = async (event) => {
   try {
-    console.log(`${JSON.stringify(event)}`);
     const connectionId = event.requestContext.connectionId;
     const domainName = event.requestContext.domainName;
     const stage = event.requestContext.stage;

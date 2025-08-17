@@ -3,6 +3,7 @@ const { ApiGatewayManagementApiClient, PostToConnectionCommand } = require('@aws
 const { DynamoDBClient, DeleteItemCommand} = require('@aws-sdk/client-dynamodb');
 const { ScanCommand } = require('@aws-sdk/lib-dynamodb');
 const client = new DynamoDBClient({ region: process.env.AWS_REGION });
+const stage = process.env.STAGE;
 
 exports.handler = async (event) => {
   try {
@@ -10,7 +11,7 @@ exports.handler = async (event) => {
       endpoint: `https://rgq4ifvq92.execute-api.us-east-1.amazonaws.com/dev`,
     });
     // Fetch all connection IDs
-    const scanCommand = new ScanCommand({ TableName: 'Connections' });
+    const scanCommand = new ScanCommand({ TableName: `Connections-${stage}` });
     const scanResponse = await client.send(scanCommand);
     const connectionIds = scanResponse.Items.map(item => item.connectionId);
 
