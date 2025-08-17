@@ -8,7 +8,6 @@ applications:
             - 'pnpm install'         # Run pnpm install
         build:
           commands:
-            - 'npm ci'
             - 'amplify env checkout $ENV'
             - export API_URL=$(aws cloudformation describe-stacks --stack-name $BACKEND-$ENV --query 'Stacks[0].Outputs[?OutputKey==`ServiceEndpoint`].OutputValue' --output text)
             - export WEBSOCKET_URL=$(aws cloudformation describe-stacks --stack-name $BACKEND-$ENV --query 'Stacks[0].Outputs[?OutputKey==`ServiceEndpointWebsocket`].OutputValue' --output text)
