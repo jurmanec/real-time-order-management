@@ -1,0 +1,26 @@
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - 'npm install -g pnpm'  # Install pnpm globally
+            - 'pnpm install'         # Run pnpm install
+        build:
+          commands:
+            - 'npm ci'
+            - 'amplify env checkout $ENV'
+            - export API_URL=$(aws cloudformation describe-stacks --stack-name $BACKEND-$ENV --query 'Stacks[0].Outputs[?OutputKey==`ServiceEndpoint`].OutputValue' --output text)
+            - export WEBSOCKET_URL=$(aws cloudformation describe-stacks --stack-name $BACKEND-$ENV --query 'Stacks[0].Outputs[?OutputKey==`ServiceEndpointWebsocket`].OutputValue' --output text)
+            - echo "NEXT_PUBLIC_API_URL=$API_URL" >> .env.production
+            - echo "NEXT_PUBLIC_WEBSOCKET_URL=$WEBSOCKET_URL" >> .env.production
+            - 'pnpm run build'
+      artifacts:
+        baseDirectory: .next
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - '.next/cache/**/*'
+          - 'node_modules/**/*'
+    appRoot: frontend
